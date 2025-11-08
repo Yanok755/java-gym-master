@@ -1,7 +1,6 @@
 package ru.yandex.practicum.gym;
 
 public class TrainingSession {
-
     //группа
     private Group group;
     //тренер
