@@ -20,12 +20,12 @@ public class TimetableTest {
 
         // Проверить, что за понедельник вернулось одно занятие
         List<TrainingSession> mondaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY);
-        Assertions.assertEquals(1, mondaySessions.size());
-        Assertions.assertEquals(singleTrainingSession, mondaySessions.get(0));
+        Assertions.assertEquals(1, mondaySessions.size(), "Должно быть одно занятие в понедельник");
+        Assertions.assertEquals(singleTrainingSession, mondaySessions.get(0), "Занятие должно соответствовать добавленному");
 
         // Проверить, что за вторник не вернулось занятий
         List<TrainingSession> tuesdaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.TUESDAY);
-        Assertions.assertTrue(tuesdaySessions.isEmpty());
+        Assertions.assertTrue(tuesdaySessions.isEmpty(), "Во вторник не должно быть занятий");
     }
 
     @Test
@@ -54,22 +54,24 @@ public class TimetableTest {
 
         // Проверить, что за понедельник вернулось одно занятие
         List<TrainingSession> mondaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY);
-        Assertions.assertEquals(1, mondaySessions.size());
-        Assertions.assertEquals(mondayChildTrainingSession, mondaySessions.get(0));
+        Assertions.assertEquals(1, mondaySessions.size(), "Должно быть одно занятие в понедельник");
+        Assertions.assertEquals(mondayChildTrainingSession, mondaySessions.get(0), "Занятие должно соответствовать добавленному");
 
         // Проверить, что за четверг вернулось два занятия в правильном порядке: сначала в 13:00, потом в 20:00
         List<TrainingSession> thursdaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.THURSDAY);
-        Assertions.assertEquals(2, thursdaySessions.size());
-        Assertions.assertEquals(thursdayChildTrainingSession, thursdaySessions.get(0));
-        Assertions.assertEquals(thursdayAdultTrainingSession, thursdaySessions.get(1));
+        Assertions.assertEquals(2, thursdaySessions.size(), "Должно быть два занятия в четверг");
         
-        // Проверить время занятий в четверг
-        Assertions.assertEquals(new TimeOfDay(13, 0), thursdaySessions.get(0).getTimeOfDay());
-        Assertions.assertEquals(new TimeOfDay(20, 0), thursdaySessions.get(1).getTimeOfDay());
+        // Проверить порядок занятий (сначала 13:00, потом 20:00)
+        Assertions.assertEquals(thursdayChildTrainingSession, thursdaySessions.get(0), "Первое занятие должно быть в 13:00");
+        Assertions.assertEquals(thursdayAdultTrainingSession, thursdaySessions.get(1), "Второе занятие должно быть в 20:00");
+        
+        // Проверить время занятий
+        Assertions.assertEquals(new TimeOfDay(13, 0), thursdaySessions.get(0).getTimeOfDay(), "Время первого занятия должно быть 13:00");
+        Assertions.assertEquals(new TimeOfDay(20, 0), thursdaySessions.get(1).getTimeOfDay(), "Время второго занятия должно быть 20:00");
 
         // Проверить, что за вторник не вернулось занятий
         List<TrainingSession> tuesdaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.TUESDAY);
-        Assertions.assertTrue(tuesdaySessions.isEmpty());
+        Assertions.assertTrue(tuesdaySessions.isEmpty(), "Во вторник не должно быть занятий");
     }
 
     @Test
@@ -85,12 +87,12 @@ public class TimetableTest {
 
         // Проверить, что за понедельник в 13:00 вернулось одно занятие
         List<TrainingSession> monday13Sessions = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(13, 0));
-        Assertions.assertEquals(1, monday13Sessions.size());
-        Assertions.assertEquals(singleTrainingSession, monday13Sessions.get(0));
+        Assertions.assertEquals(1, monday13Sessions.size(), "Должно быть одно занятие в понедельник в 13:00");
+        Assertions.assertEquals(singleTrainingSession, monday13Sessions.get(0), "Занятие должно соответствовать добавленному");
 
         // Проверить, что за понедельник в 14:00 не вернулось занятий
         List<TrainingSession> monday14Sessions = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(14, 0));
-        Assertions.assertTrue(monday14Sessions.isEmpty());
+        Assertions.assertTrue(monday14Sessions.isEmpty(), "В понедельник в 14:00 не должно быть занятий");
     }
 
     @Test
@@ -111,9 +113,9 @@ public class TimetableTest {
         
         // Проверить, что в одно время могут быть несколько тренировок
         List<TrainingSession> sessions = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(10, 0));
-        Assertions.assertEquals(2, sessions.size());
-        Assertions.assertTrue(sessions.contains(session1));
-        Assertions.assertTrue(sessions.contains(session2));
+        Assertions.assertEquals(2, sessions.size(), "Должно быть два занятия в одно время");
+        Assertions.assertTrue(sessions.contains(session1), "Должно содержать первое занятие");
+        Assertions.assertTrue(sessions.contains(session2), "Должно содержать второе занятие");
     }
 
     @Test
@@ -121,12 +123,14 @@ public class TimetableTest {
         Timetable timetable = new Timetable();
         
         // Проверить, что для пустого расписания возвращаются пустые списки
-        Assertions.assertTrue(timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY).isEmpty());
-        Assertions.assertTrue(timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(10, 0)).isEmpty());
+        Assertions.assertTrue(timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY).isEmpty(), 
+            "Для пустого расписания должен возвращаться пустой список");
+        Assertions.assertTrue(timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(10, 0)).isEmpty(), 
+            "Для пустого расписания должен возвращаться пустой список");
         
         // Проверить статистику тренеров для пустого расписания
         List<CoachTrainingCount> coachStats = timetable.getCountByCoaches();
-        Assertions.assertTrue(coachStats.isEmpty());
+        Assertions.assertTrue(coachStats.isEmpty(), "Для пустого расписания статистика тренеров должна быть пустой");
     }
 
     @Test
@@ -153,17 +157,17 @@ public class TimetableTest {
         
         List<CoachTrainingCount> result = timetable.getCountByCoaches();
         
-        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals(3, result.size(), "Должно быть три тренера в статистике");
         
         // Проверить сортировку по убыванию количества тренировок
-        Assertions.assertEquals(3, result.get(0).getTrainingCount());
-        Assertions.assertEquals(coach1, result.get(0).getCoach());
+        Assertions.assertEquals(3, result.get(0).getTrainingCount(), "Первый тренер должен иметь 3 тренировки");
+        Assertions.assertEquals(coach1, result.get(0).getCoach(), "Первый тренер должен быть coach1");
         
-        Assertions.assertEquals(2, result.get(1).getTrainingCount());
-        Assertions.assertEquals(coach2, result.get(1).getCoach());
+        Assertions.assertEquals(2, result.get(1).getTrainingCount(), "Второй тренер должен иметь 2 тренировки");
+        Assertions.assertEquals(coach2, result.get(1).getCoach(), "Второй тренер должен быть coach2");
         
-        Assertions.assertEquals(1, result.get(2).getTrainingCount());
-        Assertions.assertEquals(coach3, result.get(2).getCoach());
+        Assertions.assertEquals(1, result.get(2).getTrainingCount(), "Третий тренер должен иметь 1 тренировку");
+        Assertions.assertEquals(coach3, result.get(2).getCoach(), "Третий тренер должен быть coach3");
     }
 
     @Test
@@ -182,14 +186,14 @@ public class TimetableTest {
         // Проверить, что на каждый день есть по одной тренировке
         for (DayOfWeek day : DayOfWeek.values()) {
             List<TrainingSession> sessions = timetable.getTrainingSessionsForDay(day);
-            Assertions.assertEquals(1, sessions.size());
-            Assertions.assertEquals(new TimeOfDay(7, 0), sessions.get(0).getTimeOfDay());
+            Assertions.assertEquals(1, sessions.size(), "На каждый день должна быть одна тренировка");
+            Assertions.assertEquals(new TimeOfDay(7, 0), sessions.get(0).getTimeOfDay(), "Время тренировки должно быть 7:00");
         }
         
         // Проверить статистику тренера
         List<CoachTrainingCount> coachStats = timetable.getCountByCoaches();
-        Assertions.assertEquals(1, coachStats.size());
-        Assertions.assertEquals(7, coachStats.get(0).getTrainingCount());
-        Assertions.assertEquals(coach, coachStats.get(0).getCoach());
+        Assertions.assertEquals(1, coachStats.size(), "Должен быть один тренер в статистике");
+        Assertions.assertEquals(7, coachStats.get(0).getTrainingCount(), "Тренер должен иметь 7 тренировок");
+        Assertions.assertEquals(coach, coachStats.get(0).getCoach(), "Тренер должен соответствовать добавленному");
     }
 }
