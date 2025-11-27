@@ -17,7 +17,7 @@ public class Timetable {
     public void addNewTrainingSession(TrainingSession trainingSession) {
         DayOfWeek day = trainingSession.getDayOfWeek();
         TimeOfDay time = trainingSession.getTimeOfDay();
-        
+
         // Получаем Map для данного дня и добавляем тренировку в список для данного времени
         timetable.get(day).computeIfAbsent(time, k -> new ArrayList<>()).add(trainingSession);
     }
@@ -41,67 +41,27 @@ public class Timetable {
         return sessions != null ? new ArrayList<>(sessions) : new ArrayList<>();
     }
 
-    // Дополнительные полезные методы:
+    // Добавляем недостающий метод для тестов
+    public List<CoachTrainingCount> getCountByCoaches() {
+        Map<Coach, Integer> coachCountMap = new HashMap<>();
 
-    public List<TrainingSession> getTrainingSessionsForCoach(Coach coach) {
-        List<TrainingSession> result = new ArrayList<>();
+        // Собираем статистику по всем тренерам
         for (Map<TimeOfDay, List<TrainingSession>> daySchedule : timetable.values()) {
             for (List<TrainingSession> sessions : daySchedule.values()) {
                 for (TrainingSession session : sessions) {
-                    if (session.getCoach().equals(coach)) {
-                        result.add(session);
-                    }
+                    Coach coach = session.getCoach();
+                    coachCountMap.put(coach, coachCountMap.getOrDefault(coach, 0) + 1);
                 }
             }
         }
+
+        // Преобразуем в список и сортируем по убыванию количества тренировок
+        List<CoachTrainingCount> result = new ArrayList<>();
+        for (Map.Entry<Coach, Integer> entry : coachCountMap.entrySet()) {
+            result.add(new CoachTrainingCount(entry.getKey(), entry.getValue()));
+        }
+
+        result.sort((c1, c2) -> c2.getTrainingCount() - c1.getTrainingCount());
         return result;
-    }
-
-    public List<TrainingSession> getTrainingSessionsForGroup(Group group) {
-        List<TrainingSession> result = new ArrayList<>();
-        for (Map<TimeOfDay, List<TrainingSession>> daySchedule : timetable.values()) {
-            for (List<TrainingSession> sessions : daySchedule.values()) {
-                for (TrainingSession session : sessions) {
-                    if (session.getGroup().equals(group)) {
-                        result.add(session);
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    public boolean removeTrainingSession(TrainingSession trainingSession) {
-        DayOfWeek day = trainingSession.getDayOfWeek();
-        TimeOfDay time = trainingSession.getTimeOfDay();
-        
-        Map<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(day);
-        if (daySchedule != null) {
-            List<TrainingSession> sessions = daySchedule.get(time);
-            if (sessions != null) {
-                boolean removed = sessions.remove(trainingSession);
-                if (sessions.isEmpty()) {
-                    daySchedule.remove(time);
-                }
-                return removed;
-            }
-        }
-        return false;
-    }
-
-    public boolean isTimeSlotAvailable(DayOfWeek day, TimeOfDay time, int duration) {
-        Map<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(day);
-        if (daySchedule == null) return true;
-        
-        // Проверяем, нет ли пересечений по времени
-        for (Map.Entry<TimeOfDay, List<TrainingSession>> entry : daySchedule.entrySet()) {
-            TimeOfDay existingTime = entry.getKey();
-            // Простая проверка - если время начала совпадает, слот занят
-            if (existingTime.equals(time)) {
-                return false;
-            }
-            // Можно добавить более сложную логику проверки пересечений по времени
-        }
-        return true;
     }
 }
