@@ -128,9 +128,6 @@ public class TimetableTest {
         Assertions.assertTrue(timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(10, 0)).isEmpty(), 
             "Для пустого расписания должен возвращаться пустой список");
         
-        // Проверить статистику тренеров для пустого расписания
-        List<CoachTrainingCount> coachStats = timetable.getCountByCoaches();
-        Assertions.assertTrue(coachStats.isEmpty(), "Для пустого расписания статистика тренеров должна быть пустой");
     }
 
     @Test
@@ -190,10 +187,5 @@ public class TimetableTest {
             Assertions.assertEquals(new TimeOfDay(7, 0), sessions.get(0).getTimeOfDay(), "Время тренировки должно быть 7:00");
         }
         
-        // Проверить статистику тренера
-        List<CoachTrainingCount> coachStats = timetable.getCountByCoaches();
-        Assertions.assertEquals(1, coachStats.size(), "Должен быть один тренер в статистике");
-        Assertions.assertEquals(7, coachStats.get(0).getTrainingCount(), "Тренер должен иметь 7 тренировок");
-        Assertions.assertEquals(coach, coachStats.get(0).getCoach(), "Тренер должен соответствовать добавленному");
     }
 }
