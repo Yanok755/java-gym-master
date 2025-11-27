@@ -40,28 +40,4 @@ public class Timetable {
         List<TrainingSession> sessions = daySchedule.get(timeOfDay);
         return sessions != null ? new ArrayList<>(sessions) : new ArrayList<>();
     }
-
-    // Добавляем недостающий метод для тестов
-    public List<CoachTrainingCount> getCountByCoaches() {
-        Map<Coach, Integer> coachCountMap = new HashMap<>();
-
-        // Собираем статистику по всем тренерам
-        for (Map<TimeOfDay, List<TrainingSession>> daySchedule : timetable.values()) {
-            for (List<TrainingSession> sessions : daySchedule.values()) {
-                for (TrainingSession session : sessions) {
-                    Coach coach = session.getCoach();
-                    coachCountMap.put(coach, coachCountMap.getOrDefault(coach, 0) + 1);
-                }
-            }
-        }
-
-        // Преобразуем в список и сортируем по убыванию количества тренировок
-        List<CoachTrainingCount> result = new ArrayList<>();
-        for (Map.Entry<Coach, Integer> entry : coachCountMap.entrySet()) {
-            result.add(new CoachTrainingCount(entry.getKey(), entry.getValue()));
-        }
-
-        result.sort((c1, c2) -> c2.getTrainingCount() - c1.getTrainingCount());
-        return result;
-    }
 }
